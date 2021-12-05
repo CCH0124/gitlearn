@@ -355,3 +355,99 @@ git cheyyy-pick c3 c4 c7
 git checkout c4
 ```
 ![](https://i.imgur.com/e5jpvv3.png)
+
+## 遠端倉庫使用
+遠端倉庫是指在網路上或網路託管的倉庫。同時也需要知道*增加遠端倉庫*、*移除無效的遠端倉庫*、*管理各種遠端分之*等。
+
+##### 顯示遠端倉庫
+```shell=
+git remote #檢視已經設定了那些遠端倉庫
+git remote -v # 新增遠端倉庫對應的 URL
+git remote show # 透過網路查看該分支訊息
+```
+### 增加遠端倉庫
+```shell=
+git remote add [shortname] [URL]
+```
+> 在 ./git/config 會增加此資訊
+
+### 從遠端倉庫取得和擷取資料
+此指令從遠端倉庫中取得所有本機倉庫沒有的資料。但*不會自動將這些資料合併至本機*的工作成果中，也*不會修改工作目錄下的任何資料*。因此可以使用 `git pull` 指令自動擷取資料並合併至目前本機分支。關於分支的刪除不會有反應，也就是不會遠端同步分支，`fetch` 下來的分支和本地有區別。
+```shell=
+git fetch [remote-name] # 從遠端取得資料
+```
+#####  FETCH_HEAD 與 ORIG_HEAD
+- FETCH_HEAD 第一行用來記錄本地分支最新的提交，給 git pull 使用
+- ORIG_HEAD 在使用 git pull 時的合併動作之前該分支的提交，可用於回滾
+
+### 將資料發送至遠端倉庫
+前提下，要有寫入許可權，並且 clone 後沒有任何人向此遠端倉庫發送任何資料。發生的話，要將別人的資料擷取合併至本機
+```shell=
+git push [remote-name] [branch-name]
+```
+
+>在 .git/refs 下會新增此資訊，可用 cat-file 觀察期哈希值
+### 檢查遠端倉庫
+
+```shell=
+git remote show [remote-name]
+```
+### 刪除與重新命名遠端倉庫
+```shell=
+git remote rm [remote-name]
+```
+```shell=
+git remote rename [先前名稱] [更改名稱]
+```
+## 標記
+Git 可以把先前特定歷史的版本標記為重要版本。
+
+### 建立標籤
+Git 使用標記主要有兩種類型
+- lightweight（輕量）
+    - 很像一個不變得分支，他只是一個指向某次遞交的指標
+- annotated（註釋）
+    - 作為完整的物件儲存在 git 資料庫中
+    - 還包含其它資訊
+        - tagger
+        - tagging message
+        - GNU Privacy Guard
+### 列舉標籤
+```shell=
+git tag
+git tag -l "REGEX" # 比對模式搜索標籤
+```
+
+### 註釋標籤
+```shell=
+git tag -a [tag] -m [message]
+git show [tag] # 查標籤資料及對應提交
+```
+
+### 輕量標籤
+建立此標籤不需要使用 `-a`、`-s`、`-m` 選項
+```shell=
+git tag [tag]
+```
+### 補加標籤
+當忘記增加標籤時，可以補遞交，遞交校正碼可從 `git log` 獲取。
+```shell=
+git tag -a [tag.遞交校正碼]
+```
+
+#### 共用標籤
+預設下，`git push` 不會把標籤傳輸到遠端伺服器上。建立標籤後應明確的推送至共用伺服器。
+```shell=
+git push origin [tagname]
+git push origin --tags # 一次性將多個未在伺服器上標籤推送上去
+```
+
+### 檢出標籤
+```shell=
+git checkout -b [branchname] [tagname]
+```
+## git 別名
+```shell=
+git config --global alias.co checkout # co 可以取代 checkout 指令
+```
+相似於 linux 上別名
