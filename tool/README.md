@@ -106,5 +106,41 @@ Date:   Sun Dec 12 18:03:56 2021 +0800
 ## 遞交範圍
 上述可以指定個別遞交。當如果擁有大量的分支可以透過範圍來解決像是分支上有哪些工作尚未合併到主分支等問題。
 1. .. 雙點號
+讓 git 找出那些不在同一分支上的遞交。
+```
+A <- B <- E <- F <- master
+      \
+       <- C <- D <- featureA
+```
+下面表示了可從 featureA 分支獲取而不能從 master 分支中獲取的分支
+```bash
+git log master..featureA
+D
+C
+git log featureA..master
+F
+E
+```
+因此想要知道當前分支尚未遞交到原端 master 分支的遞交時可使用此方式。
+2. 多點
+想檢視兩個以上分支遞交
+```bash
+git log refA refB ^refC
+git log refA refB --not refC
+```
+3. ... 三點
+檢視非共有的遞交，加上 `--left-right` 可以顯示屬於哪一側分支的遞交
+```bash
+git log master...featureA
+F
+E
+D
+C
+git log --left-right master...featureA
+<F
+<E
+>D
+>C
+```
 
-2. 
+## 儲藏與清理
